@@ -11,6 +11,9 @@ Example:
 	swan -p /home/chenyu/swan
 
 ## 配置文件
+
+swan会在工程目录，用户家目录寻找.swanconfig配置文件
+
 ```
 [basic]
 suffixes = go, conf # 检测的文件后缀
