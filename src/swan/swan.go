@@ -37,7 +37,10 @@ func main() {
 	*/
 	flag.Parse()
 
-	cfg.Reload(*root)
+	if err := cfg.Reload(*root); err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 	if cfg.Handle != nil {
 		build = cfg.Handle.GetValue("command", "build")
 	}
@@ -102,34 +105,39 @@ func scan() {
 
 func runCommand() {
 	if build != "" {
-		out, err := exec.Command("/bin/bash", "-c", fmt.Sprintf("cd %s && %s", *root, build)).Output()
-		fmt.Println("\nStart build project, out: ")
-		fmt.Println("===========================")
-		fmt.Println(string(out))
-		if err != nil {
-			fmt.Println("Err: ", err)
+		cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("cd %s && %s", *root, build))
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		fmt.Println("\nStart build...")
+		if err := cmd.Run(); err != nil {
+			fmt.Println("============== Build failed ===================")
 			return
 		}
+		fmt.Println("Build was successful")
 	}
 
 	if stop != "" {
-		out, err := exec.Command("/bin/bash", "-c", fmt.Sprintf("cd %s && %s", *root, stop)).Output()
-		fmt.Println("\nStop project, out: ")
-		fmt.Println("===========================")
-		fmt.Println(string(out))
-		if err != nil {
-			fmt.Println("Err: ", err)
+		cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("cd %s && %s", *root, stop))
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		fmt.Println("\nStop project...")
+		if err := cmd.Run(); err != nil {
+			fmt.Println("============== Stop failed ===================")
+			return
 		}
+		fmt.Println("Stop was successful")
 	}
 
 	if start != "" {
-		out, err := exec.Command("/bin/bash", "-c", fmt.Sprintf("cd %s && %s", *root, start)).Output()
-		fmt.Println("\nStart project, out: ")
-		fmt.Println("===========================")
-		fmt.Println(string(out))
-		if err != nil {
-			fmt.Println("Err: ", err)
+		cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("cd %s && %s", *root, start))
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		fmt.Println("\nStart project...")
+		if err := cmd.Run(); err != nil {
+			fmt.Println("============== Start failed ===================")
+			return
 		}
+		fmt.Println("Start was successful")
 	}
 }
 

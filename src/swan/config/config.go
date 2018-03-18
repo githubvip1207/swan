@@ -23,26 +23,24 @@ const (
 	name string = ".swanconfig"
 )
 
-func Reload(root string) {
+func Reload(root string) (err error) {
 	Path = root
-	r, err := findRealIniFile()
+	Path, err = findRealIniFile()
 	if err != nil {
 		return
 	}
-	Path = r
 	Handle = SetConfig(Path)
+	return
 }
 
 func findRealIniFile() (r string, err error) {
 	f := fmt.Sprintf("%s/%s", Path, name)
 	if utils.FileExists(f) {
-		r = f
-		return
+		return f, nil
 	}
 	f = fmt.Sprintf("%s/%s", os.Getenv("HOME"), name)
 	if utils.FileExists(f) {
-		r = f
-		return
+		return f, nil
 	}
 	err = errors.New("config file not found.")
 	return
